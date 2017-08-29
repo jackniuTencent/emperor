@@ -30,69 +30,16 @@ import android.widget.Button;
 
 public class Launcher extends AppCompatActivity {
 
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_launcher);
-//
-//    // Example of a call to a native method
-//    TextView tv = (TextView) findViewById(R.id.sample_text);
-//    tv.setText(stringFromJNI());
-//    }
-
-    private Button playButton;
-    private Button stopButton;
-    private MediaPlayer mediaPlayer;
-
-    class RenderView extends View{
-        Bitmap bob565;
-        Bitmap bob4444;
-        Rect dst = new Rect();
-
-        public RenderView(Context context){
-            super(context);
-
-            try{
-                AssetManager assetManager = context.getAssets();
-                InputStream inputStream = assetManager.open("China_FE_MainMenu.jpg");
-                bob565 = BitmapFactory.decodeStream(inputStream);
-                inputStream.close();
-                Log.d("BitmapText",
-                        "bobrgb888.png format: " + bob565.getConfig());
-
-//                inputStream = assetManager.open("bobargb8888.png");
-//                BitmapFactory.Options options = new BitmapFactory.Options();
-//                options.inPreferredConfig = Bitmap.Config.ARGB_4444;
-//                bob4444 = BitmapFactory
-//                        .decodeStream(inputStream, null, options);
-//                inputStream.close();
-//                Log.d("BitmapText",
-//                        "bobargb8888.png format: " + bob4444.getConfig());
-            }catch(IOException e){
-                // silently ignored, bad coder monkey, baaad!
-            }finally{
-                // we should really close our input streams here.
-            }
-        }
-
-        protected void onDraw(Canvas canvas){
-            dst.set(0, 0, 1000, 1000);
-            canvas.drawBitmap(bob565, null, dst, null);
-            //canvas.drawBitmap(bob4444, 100, 100, null);
-            invalidate();
-        }
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // TODO Auto-generated method stub
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(new RenderView(this));
+        setContentView(R.layout.activity_launcher);
 
-        playButton=(Button)findViewById(R.id.playButton);
+    // Example of a call to a native method
+    TextView tv = (TextView) findViewById(R.id.sample_text);
+    tv.setText(stringFromJNI());
+
+                playButton=(Button)findViewById(R.id.playButton);
         stopButton=(Button)findViewById(R.id.stopButton);
 
         //播放MP3
@@ -150,6 +97,61 @@ public class Launcher extends AppCompatActivity {
             }
         });
     }
+
+    private Button playButton;
+    private Button stopButton;
+    private MediaPlayer mediaPlayer;
+
+    class RenderView extends View{
+        Bitmap bob565;
+        Bitmap bob4444;
+        Rect dst = new Rect();
+
+        public RenderView(Context context){
+            super(context);
+
+            try{
+                AssetManager assetManager = context.getAssets();
+                InputStream inputStream = assetManager.open("China_FE_MainMenu.jpg");
+                bob565 = BitmapFactory.decodeStream(inputStream);
+                inputStream.close();
+                Log.d("BitmapText",
+                        "bobrgb888.png format: " + bob565.getConfig());
+
+//                inputStream = assetManager.open("bobargb8888.png");
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inPreferredConfig = Bitmap.Config.ARGB_4444;
+//                bob4444 = BitmapFactory
+//                        .decodeStream(inputStream, null, options);
+//                inputStream.close();
+//                Log.d("BitmapText",
+//                        "bobargb8888.png format: " + bob4444.getConfig());
+            }catch(IOException e){
+                // silently ignored, bad coder monkey, baaad!
+            }finally{
+                // we should really close our input streams here.
+            }
+        }
+
+        protected void onDraw(Canvas canvas){
+            dst.set(0, 0, 1000, 1000);
+            canvas.drawBitmap(bob565, null, dst, null);
+            //canvas.drawBitmap(bob4444, 100, 100, null);
+            invalidate();
+        }
+    }
+
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        // TODO Auto-generated method stub
+//        super.onCreate(savedInstanceState);
+//        requestWindowFeature(Window.FEATURE_NO_TITLE);
+//        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//        setContentView(new RenderView(this));
+//
+
+//    }
 
     /**
      * 创建网络mp3
