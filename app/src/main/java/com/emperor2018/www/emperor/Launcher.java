@@ -1,7 +1,9 @@
 package com.emperor2018.www.emperor;
 
+import android.media.MediaPlayer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.TextView;
 
 import java.io.IOException;
@@ -20,6 +22,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import android.media.MediaPlayer.OnCompletionListener;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
 public class Launcher extends AppCompatActivity {
 
 //    @Override
@@ -32,6 +40,10 @@ public class Launcher extends AppCompatActivity {
 //    tv.setText(stringFromJNI());
 //    }
 
+    private Button playButton;
+    private Button stopButton;
+    private MediaPlayer mediaPlayer;
+
     class RenderView extends View{
         Bitmap bob565;
         Bitmap bob4444;
@@ -42,7 +54,7 @@ public class Launcher extends AppCompatActivity {
 
             try{
                 AssetManager assetManager = context.getAssets();
-                InputStream inputStream = assetManager.open("bobrgb888.png");
+                InputStream inputStream = assetManager.open("China_FE_MainMenu.jpg");
                 bob565 = BitmapFactory.decodeStream(inputStream);
                 inputStream.close();
                 Log.d("BitmapText",
@@ -79,9 +91,101 @@ public class Launcher extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(new RenderView(this));
+
+        playButton=(Button)findViewById(R.id.playButton);
+        stopButton=(Button)findViewById(R.id.stopButton);
+
+        //播放MP3
+        playButton.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(playButton.getText().toString().equals("播放")){
+                    boolean createState=false;
+                    if(mediaPlayer==null){
+                        mediaPlayer=createLocalMp3();
+                        createState=true;
+                    }
+                    //当播放完音频资源时，会触发onCompletion事件，可以在该事件中释放音频资源，
+                    //以便其他应用程序可以使用该资源:
+                    mediaPlayer.setOnCompletionListener(new OnCompletionListener(){
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            mp.release();//释放音频资源
+                            stopButton.setEnabled(false);
+                            setTitle("资源已经被释放了");
+                        }
+                    });
+                    try {
+                        //在播放音频资源之前，必须调用Prepare方法完成些准备工作
+                        if(createState) mediaPlayer.prepare();
+                        //开始播放音频
+                        mediaPlayer.start();
+                        playButton.setText("暂停");
+                    } catch (IllegalStateException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }else if(playButton.getText().toString().equals("暂停")){
+                    if(mediaPlayer!=null){
+                        mediaPlayer.pause();//暂停
+                        playButton.setText("播放");
+                    }
+                }
+                stopButton.setEnabled(true);
+            }
+        });
+
+        //停止
+        stopButton.setOnClickListener(new OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                if(mediaPlayer!=null){
+                    mediaPlayer.stop();//停止播放
+                    mediaPlayer.release();//释放资源
+                    mediaPlayer=null;
+                    playButton.setText("播放");
+                    stopButton.setEnabled(false);
+                }
+            }
+        });
     }
 
+    /**
+     * 创建网络mp3
+     * @return
+     */
+    public MediaPlayer createNetMp3(){
+        String url="http://192.168.1.100:8080/media/beatit.mp3";
+        MediaPlayer mp=new MediaPlayer();
+        try {
+            mp.setDataSource(url);
+        } catch (IllegalArgumentException e) {
+            return null;
+        } catch (IllegalStateException e) {
+            return null;
+        } catch (IOException e) {
+            return null;
+        }
+        return mp;
+    }
+    /**
+     * 创建本地MP3
+     * @return
+     */
+    public MediaPlayer createLocalMp3(){
         /**
+         * 创建音频文件的方法：
+         * 1、播放资源目录的文件：MediaPlayer.create(MainActivity.this,R.raw.beatit);//播放res/raw 资源目录下的MP3文件
+         * 2:播放sdcard卡的文件：mediaPlayer=new MediaPlayer();
+         *   mediaPlayer.setDataSource("/sdcard/beatit.mp3");//前提是sdcard卡要先导入音频文件
+         */
+        MediaPlayer mp=MediaPlayer.create(this,R.raw.xia_1i);
+        mp.stop();
+        return mp;
+    }
+
+    /**
          * A native method that is implemented by the 'native-lib' native library,
          * which is packaged with this application.
          */
