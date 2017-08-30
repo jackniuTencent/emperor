@@ -33,6 +33,10 @@ public class Launcher extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_launcher);
 
     // Example of a call to a native method
@@ -96,6 +100,11 @@ public class Launcher extends AppCompatActivity {
                 }
             }
         });
+
+        android.support.constraint.ConstraintLayout cLayout = (android.support.constraint.ConstraintLayout)findViewById(R.id.conStraintLayout);
+
+        cLayout.addView(new RenderView(this));
+
     }
 
     private Button playButton;
@@ -126,6 +135,11 @@ public class Launcher extends AppCompatActivity {
 //                inputStream.close();
 //                Log.d("BitmapText",
 //                        "bobargb8888.png format: " + bob4444.getConfig());
+
+
+
+
+
             }catch(IOException e){
                 // silently ignored, bad coder monkey, baaad!
             }finally{
